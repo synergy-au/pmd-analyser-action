@@ -1,0 +1,30 @@
+name: 'PMD Analyser'
+description: 'Runs PMD Source Code Analyser based on the ruleset defined - https://pmd.github.io/'
+inputs:
+  analyse-all-code:
+    description: 'Used to determine whether you just want to analyse the files changed or the whole repository.'
+    required: false
+    default: 'false'
+  error-rules:
+    description: 'If you wish to define rules that log as an error, enter each rule name separated with a comma and no spaces. Note that if an error is identified the run will fail. e.g. ClassNamingConventions,GuardLogStatement'
+    required: false
+  file-path:
+    description: 'Path to the sources to analyse. This can be a file name, a directory, or a jar or zip file containing the sources.'
+    required: true
+  pmd-version:
+    description: 'The version of PMD you would like to run.'
+    required: false
+    default: '6.27.0'
+  rules-path:
+    description: 'The ruleset file you want to use. PMD uses xml configuration files, called rulesets, which specify which rules to execute on your sources. You can also run a single rule by referencing it using its category and name (more details here). For example, you can check for unnecessary modifiers on Java sources with -R category/java/codestyle.xml/UnnecessaryModifier.'
+    required: true
+runs:
+  using: "composite"
+  steps: 
+    - run: |
+        if [ ${{ github.event_name }} == 'pull_request' ]; then
+            ${{ github.action_path }}/pmd-analyser.sh ${{ inputs.pmd-version }} ${{ inputs.file-path }} ${{ inputs.rules-path }} ${{ inputs.analyse-all-code }} ${{ github.base_ref }} ${{ github.head_ref }} ${{ inputs.error-rules }}
+        else
+            ${{ github.action_path }}/pmd-analyser.sh ${{ inputs.pmd-version }} ${{ inputs.file-path }} ${{ inputs.rules-path }} ${{ inputs.analyse-all-code }} ${{ github.event.repository.default_branch }} ${{ github.ref }} ${{ inputs.error-rules }}
+        fi
+      shell: bash
