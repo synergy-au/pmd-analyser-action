@@ -1,5 +1,8 @@
 name: 'PMD Analyser'
 description: 'Runs PMD Source Code Analyser based on the ruleset defined - https://pmd.github.io/'
+branding:
+  icon: 'zoom-in'  
+  color: 'yellow'
 inputs:
   analyse-all-code:
     description: 'Used to determine whether you just want to analyse the files changed or the whole repository.'
@@ -14,7 +17,7 @@ inputs:
   pmd-version:
     description: 'The version of PMD you would like to run.'
     required: false
-    default: '6.27.0'
+    default: '6.28.0'
   rules-path:
     description: 'The ruleset file you want to use. PMD uses xml configuration files, called rulesets, which specify which rules to execute on your sources. You can also run a single rule by referencing it using its category and name (more details here). For example, you can check for unnecessary modifiers on Java sources with -R category/java/codestyle.xml/UnnecessaryModifier.'
     required: true

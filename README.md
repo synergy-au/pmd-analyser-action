@@ -1,6 +1,6 @@
 # PMD Analyser - GitHub Action
 
-GitHub Action to run [PMD Analyser](https://pmd.github.io/) based on the ruleset defined. This is using [ShellCheck](https://github.com/koalaman/shellcheck) to lint this script.
+GitHub Action to run [PMD Analyser](https://pmd.github.io/) based on the ruleset defined.
 
 By default this will generate warning notifications for any rule violations specified in the ruleset on a pull request or a push, but the check won't fail. If you wish for some rule violations to cause error notifications and for the check to fail, you can specify the rule names in a comma separated input in the workflow file.
 
@@ -19,13 +19,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
-          # If you are looking to do incremental diffs on push, set the fetch depth to 0
-          # For all other situations for performance purposes, set the fetch depth to 1
-          fetch-depth: '1'
+          # Incremental diffs require fetch depth to be at 0 to grab the target branch
+          fetch-depth: '0'
       - name: Run PMD Analyser
         uses: synergy-au/pmd-analyser-action@v1
         with:
-          pmd-version: '6.27.0'
+          pmd-version: '6.28.0'
           file-path: './src'
           rules-path: './pmd-ruleset.xml'
           error-rules: 'AvoidDirectAccessTriggerMap,AvoidDmlStatementsInLoops,AvoidHardcodingId'
@@ -35,7 +34,7 @@ jobs:
 
 ### analyse-all-code
 
-Used to determine whether you just want to analyse the files changed or the whole repository. Note that if you wish to analyse the files changed on pushes only, you will need to set the fetch-depth in the checkout action in the workflow to '0'.
+Used to determine whether you just want to analyse the files changed or the whole repository. Note that if you wish to analyse the files changed, you will need to set the fetch-depth in the checkout action in the workflow to '0'.
 
 -   required: false
 -   default: 'false'
