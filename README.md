@@ -24,7 +24,7 @@ jobs:
       - name: Run PMD Analyser
         uses: synergy-au/pmd-analyser-action@v1
         with:
-          pmd-version: '6.28.0'
+          pmd-version: '6.33.0'
           file-path: './src'
           rules-path: './pmd-ruleset.xml'
           error-rules: 'AvoidDirectAccessTriggerMap,AvoidDmlStatementsInLoops,AvoidHardcodingId'
@@ -56,7 +56,7 @@ Path to the sources to analyse. This can be a file name, a directory, or a jar o
 The version of PMD you would like to run.
 
 -   required: true
--   default: '6.27.0'
+-   default: '6.33.0'
 
 ### rules-path
 
