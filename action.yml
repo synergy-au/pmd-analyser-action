@@ -17,17 +17,30 @@ inputs:
   pmd-version:
     description: 'The version of PMD you would like to run.'
     required: false
-    default: '6.28.0'
+    default: '6.33.0'
   rules-path:
     description: 'The ruleset file you want to use. PMD uses xml configuration files, called rulesets, which specify which rules to execute on your sources. You can also run a single rule by referencing it using its category and name (more details here). For example, you can check for unnecessary modifiers on Java sources with -R category/java/codestyle.xml/UnnecessaryModifier.'
     required: true
 runs:
   using: "composite"
   steps: 
-    - run: |
+    - id: branches
+      run: |
         if [ ${{ github.event_name }} == 'pull_request' ]; then
-            ${{ github.action_path }}/pmd-analyser.sh ${{ inputs.pmd-version }} ${{ inputs.file-path }} ${{ inputs.rules-path }} ${{ inputs.analyse-all-code }} ${{ github.base_ref }} ${{ github.head_ref }} ${{ inputs.error-rules }}
+            echo "::set-output name=target::${{ github.base_ref }}"
+            echo "::set-output name=source::${{ github.head_ref }}"
         else
-            ${{ github.action_path }}/pmd-analyser.sh ${{ inputs.pmd-version }} ${{ inputs.file-path }} ${{ inputs.rules-path }} ${{ inputs.analyse-all-code }} ${{ github.event.repository.default_branch }} ${{ github.ref }} ${{ inputs.error-rules }}
+            echo "::set-output name=target::${{ github.event.repository.default_branch }}"
+            echo "::set-output name=source::${{ github.ref }}"
         fi
       shell: bash
+    - run: ${{ github.action_path }}/pmd-analyser.sh
+      shell: bash
+      env:
+        PMD_VERSION: ${{ inputs.pmd-version }}
+        FILE_PATH: ${{ inputs.file-path }}
+        RULES_PATH: ${{ inputs.rules-path }}
+        ANALYSE_ALL_CODE: ${{ inputs.analyse-all-code }}
+        TARGET_BRANCH: ${{ steps.branches.outputs.target }}
+        SOURCE_BRANCH: ${{ steps.branches.outputs.source }}
+        ERROR_RULES: ${{ inputs.error-rules }}

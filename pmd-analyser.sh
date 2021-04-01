@@ -1,12 +1,5 @@
 # shellcheck shell=sh
 
-PMD_VERSION=$1
-FILE_PATH=$2
-RULES_PATH=$3
-ANALYSE_ALL_CODE=$4
-TARGET_BRANCH=$5
-SOURCE_BRANCH=$6
-ERROR_RULES=$7
 ERROR_COUNT=0
 
 # Download PMD
@@ -25,7 +18,7 @@ fi
  while read -r file; do
     FILENAME="$(echo "$file" | jq --raw-output '.filename | ltrimstr("${{ github.workspace }}/")')"
     while read -r violation; do
-        MESSAGE="$(echo "$violation" | jq --raw-output '" \(.ruleset) - \(.rule): \(.description). This applies from line \(.beginline) to \(.endline) and from column \(.begincolumn) to \(.endcolumn). For more information on this rule visit \(.externalInfoUrl)."')"
+        MESSAGE="$(echo "$violation" | jq --raw-output '" \(.ruleset) - \(.rule): \(.description). This applies from line \(.beginline) to \(.endline) and from column \(.begincolumn) to \(.endcolumn). For more information on this rule visit \(.externalInfoUrl)"')"
         LINE="$(echo "$violation" | jq --raw-output '.beginline')"
         COLUMN="$(echo "$violation" | jq --raw-output '.begincolumn')"
         RULE="$(echo "$violation" | jq --raw-output '.rule')"
