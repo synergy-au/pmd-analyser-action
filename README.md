@@ -19,6 +19,8 @@ jobs:
     name: PMD Static Code Analysis
     permissions:
       security-events: write
+      actions: read
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
