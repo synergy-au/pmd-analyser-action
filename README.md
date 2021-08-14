@@ -36,7 +36,7 @@ jobs:
           fetch-depth: '0'
       - name: Run PMD Analyser
         id: pmd-analysis
-        uses: synergy-au/pmd-analyser-action@v2
+        uses: synergy-au/pmd-analyser-action@v2.1
         with:
           pmd-version: 'latest'
           file-path: './src'
