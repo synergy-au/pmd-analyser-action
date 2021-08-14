@@ -25,9 +25,9 @@ inputs:
     description: 'If you wish to define rules that log as a note, enter each rule name separated with a comma and no spaces. Note that if a note is identified the run will not fail. e.g. ClassNamingConventions,GuardLogStatement'
     required: false
   pmd-version:
-    description: 'The version of PMD you would like to run.'
+    description: 'The version of PMD you would like to run. You can either specify latest to always get the newest version, or you can specify a version number like 6.37.0'
     required: false
-    default: '6.34.0'
+    default: 'latest'
   rules-path:
     description: 'The ruleset file you want to use. PMD uses xml configuration files, called rulesets, which specify which rules to execute on your sources. You can also run a single rule by referencing it using its category and name (more details here). For example, you can check for unnecessary modifiers on Java sources with -R category/java/codestyle.xml/UnnecessaryModifier.'
     required: true

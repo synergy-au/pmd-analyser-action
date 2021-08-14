@@ -7,12 +7,18 @@ Features of this action include:
 - Set the severity level you want rules reported at. Levels include error, warning and note (default level is warning).
 - Run PMD Analyser on the files changed. File comparison can be done either based on a git diff or based on the files changed specified on the GitHub pull request.
 
+Note that when you are running this action and making use of the SARIF uploader in the example below, if you are looking to get pull request comments then you will need to run the analyser on push events for the target branch that pull requests are targetting.
+
 ## Example GitHub Action Workflow File
 ```
 name: PMD Static Code Analysis
 on:
   pull_request:
+    branches:
+      - main
   push:
+    branches:
+      - main
 
 jobs:
   pmd-analyser-check:
@@ -32,7 +38,7 @@ jobs:
         id: pmd-analysis
         uses: synergy-au/pmd-analyser-action@v2
         with:
-          pmd-version: '6.34.0'
+          pmd-version: 'latest'
           file-path: './src'
           rules-path: './pmd-ruleset.xml'
           error-rules: 'AvoidDirectAccessTriggerMap,AvoidDmlStatementsInLoops,AvoidHardcodingId'
@@ -90,10 +96,10 @@ If you wish to define rules that log as a note, enter each rule name separated w
 
 ### pmd-version
 
-The version of PMD you would like to run.
+The version of PMD you would like to run. You can either specify latest to always get the newest version, or you can specify a version number like 6.37.0.
 
--   required: true
--   default: '6.33.0'
+-   required: false
+-   default: 'latest'
 
 ### rules-path
 
