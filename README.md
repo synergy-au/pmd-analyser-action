@@ -7,7 +7,7 @@ Features of this action include:
 - Set the severity level you want rules reported at. Levels include error, warning and note (default level is warning).
 - Run PMD Analyser on the files changed. File comparison can be done either based on a git diff or based on the files changed specified on the GitHub pull request.
 
-Note that when you are running this action and making use of the SARIF uploader in the example below, if you are looking to get pull request comments then you will need to run the analyser on push events for the target branch that pull requests are targetting.
+Note that when you are running this action and making use of the SARIF uploader in the example below, if you are looking to get pull request comments then you will need to run the analyser on push events for the target branch that pull requests are targetting. Also note that the PMD analyser needs to be run in the same workflow file, as GitHub's upload SARIF action also checks both the commits and the workflow file they were run from. It's recommended you run a full analysis when pushing on the main branch and an incremental on pull requests (as if you run an incremental on push, it assumes that you may have fixed some errors).
 
 ## Example GitHub Action Workflow File
 ```
@@ -19,6 +19,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   pmd-analyser-check:
@@ -34,8 +35,20 @@ jobs:
         with:
           # Incremental diffs require fetch depth to be at 0 to grab the target branch
           fetch-depth: '0'
-      - name: Run PMD Analyser
-        id: pmd-analysis
+      - name: Run Full PMD Analysis
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        id: pmd-full-analysis
+        uses: synergy-au/pmd-analyser-action@v2.1
+        with:
+          analyse-all-code: 'true'
+          pmd-version: 'latest'
+          file-path: './src'
+          rules-path: './pmd-ruleset.xml'
+          error-rules: 'AvoidDirectAccessTriggerMap,AvoidDmlStatementsInLoops,AvoidHardcodingId'
+          note-rules: 'ApexDoc'
+      - name: Run PMD Analysis on Files Changed
+        id: pmd-partial-analysis
+        if: github.event.pull_request != null
         uses: synergy-au/pmd-analyser-action@v2.1
         with:
           pmd-version: 'latest'
@@ -49,7 +62,7 @@ jobs:
           sarif_file: pmd-output.sarif
       - name: No PMD Errors?
         run: |
-          if ${{ steps.pmd-analysis.outputs.error-found }}
+          if ${{ steps.pmd-full-analysis.outputs.error-found }} ${{ steps.pmd-partial-analysis.outputs.error-found }}
           then
             exit 3
           fi
