@@ -25,9 +25,9 @@ inputs:
     description: 'If you wish to define rules that log as a note, enter each rule name separated with a comma and no spaces. Note that if a note is identified the run will not fail. e.g. ClassNamingConventions,GuardLogStatement'
     required: false
   pmd-version:
-    description: 'The version of PMD you would like to run.'
+    description: 'The version of PMD you would like to run. You can either specify latest to always get the newest version, or you can specify a version number like 6.37.0'
     required: false
-    default: '6.34.0'
+    default: 'latest'
   rules-path:
     description: 'The ruleset file you want to use. PMD uses xml configuration files, called rulesets, which specify which rules to execute on your sources. You can also run a single rule by referencing it using its category and name (more details here). For example, you can check for unnecessary modifiers on Java sources with -R category/java/codestyle.xml/UnnecessaryModifier.'
     required: true
@@ -38,14 +38,14 @@ outputs:
 runs:
   using: "composite"
   steps: 
-    - id: branches
+    - id: code
       run: |
         if [ ${{ github.event_name }} == 'pull_request' ]; then
-            echo "::set-output name=target::${{ github.base_ref }}"
-            echo "::set-output name=source::${{ github.head_ref }}"
+            echo "::set-output name=current_code::${{ github.base_ref }}"
+            echo "::set-output name=changed_code::${{ github.head_ref }}"
         else
-            echo "::set-output name=target::${{ github.event.repository.default_branch }}"
-            echo "::set-output name=source::${{ github.ref }}"
+            echo "::set-output name=current_code::${{ github.event.before }}"
+            echo "::set-output name=changed_code::${{ github.event.after }}"
         fi
       shell: bash
     - id: pmd-analysis
@@ -56,8 +56,8 @@ runs:
         FILE_PATH: ${{ inputs.file-path }}
         RULES_PATH: ${{ inputs.rules-path }}
         ANALYSE_ALL_CODE: ${{ inputs.analyse-all-code }}
-        TARGET_BRANCH: ${{ steps.branches.outputs.target }}
-        SOURCE_BRANCH: ${{ steps.branches.outputs.source }}
+        CURRENT_CODE: ${{ steps.code.outputs.current_code }}
+        CHANGED_CODE: ${{ steps.code.outputs.changed_code }}
         ERROR_RULES: ${{ inputs.error-rules }}
         NOTE_RULES: ${{ inputs.note-rules }}
         REPO_NAME: ${{ github.event.repository.full_name }}
@@ -65,3 +65,4 @@ runs:
         AUTH_TOKEN: ${{ inputs.auth-token }}
         FILE_DIFF_TYPE: ${{ inputs.file-diff-type }}
         WORKSPACE: ${{ github.workspace }}/
+        ACTION_EVENT_NAME: ${{ github.event_name }}
