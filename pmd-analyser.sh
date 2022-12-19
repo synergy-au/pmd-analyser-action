@@ -1,4 +1,6 @@
-# shellcheck shell=sh
+#!/bin/bash
+
+# shellcheck shell=bash
 
 # Check whether to use latest version of PMD
 if [ "$PMD_VERSION" == 'latest' ]; then
@@ -32,7 +34,7 @@ fi
 echo "::set-output name=error-found::false"
 while read -r rule; do
     RULE="$(echo "$rule" | jq --raw-output '.id')"
-    if [[ $RULE && "$ERROR_RULES" == *"$RULE"* ]]; then
+    if [[ "$RULE" && "$ERROR_RULES" == *"$RULE"* ]]; then
         echo "::set-output name=error-found::true"
         break
     fi
