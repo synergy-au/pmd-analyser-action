@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 
 # Check whether to use latest version of PMD
-if [ "$PMD_VERSION" == 'latest' ]; then
+if [ $PMD_VERSION = 'latest' ]; then
     LATEST_TAG="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/latest | jq --raw-output '.tag_name')"
     PMD_VERSION="${LATEST_TAG#"pmd_releases/"}"
 fi
