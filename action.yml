@@ -41,11 +41,11 @@ runs:
     - id: code
       run: |
         if [ ${{ github.event_name }} == 'pull_request' ]; then
-            echo "::set-output name=current_code::${{ github.base_ref }}"
-            echo "::set-output name=changed_code::${{ github.head_ref }}"
+            echo "current_code=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+            echo "changed_code=${{ github.head_ref }}" $GITHUB_OUTPUT
         else
-            echo "::set-output name=current_code::${{ github.event.before }}"
-            echo "::set-output name=changed_code::${{ github.event.after }}"
+            echo "current_code=${{ github.event.before }}" $GITHUB_OUTPUT
+            echo "changed_code=${{ github.event.after }}" $GITHUB_OUTPUT
         fi
       shell: bash
     - id: pmd-analysis
