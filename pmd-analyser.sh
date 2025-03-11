@@ -3,13 +3,13 @@
 
 # Check whether to use latest version of PMD
 if [ "$PMD_VERSION" == 'latest' ]; then
-    DOWNLOAD_URL="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/latest | jq --raw-output '.assets[] | select(.name | contains("bin")) | .browser_download_url')"
-    PMD_FILENAME="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/latest | jq --raw-output '.assets[] | select(.name | contains("bin")) | .name')"
+    DOWNLOAD_URL="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/latest | jq --raw-output '.assets[] | select(.name | contains("bin")) | select(.name | contains("asc") | not) | .browser_download_url')"
+    PMD_FILENAME="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/latest | jq --raw-output '.assets[] | select(.name | contains("bin")) | select(.name | contains("asc") | not) | .name')"
     LATEST_TAG="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/latest | jq --raw-output '.tag_name')"
     PMD_VERSION="${LATEST_TAG#"pmd_releases/"}"
 else
-    DOWNLOAD_URL="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/tags/pmd_releases%2F"${PMD_VERSION}" | jq --raw-output '.assets[] | select(.name | contains("bin")) | .browser_download_url')"
-    PMD_FILENAME="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/tags/pmd_releases%2F"${PMD_VERSION}" | jq --raw-output '.assets[] | select(.name | contains("bin")) | .name')"
+    DOWNLOAD_URL="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/tags/pmd_releases%2F"${PMD_VERSION}" | jq --raw-output '.assets[] | select(.name | contains("bin")) | select(.name | contains("asc") | not) | .browser_download_url')"
+    PMD_FILENAME="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/tags/pmd_releases%2F"${PMD_VERSION}" | jq --raw-output '.assets[] | select(.name | contains("bin")) | select(.name | contains("asc") | not) | .name')"
     LATEST_TAG="$(curl -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/pmd/pmd/releases/tags/pmd_releases%2F"${PMD_VERSION}" | jq --raw-output '.tag_name')"
     PMD_VERSION="${LATEST_TAG#"pmd_releases/"}"
 fi
